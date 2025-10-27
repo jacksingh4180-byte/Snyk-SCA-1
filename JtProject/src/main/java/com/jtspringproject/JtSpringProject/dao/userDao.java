@@ -23,6 +23,7 @@ public class userDao {
 	public void setSessionFactory(SessionFactory sf) {
         this.sessionFactory = sf;
     }
+
    @Transactional
     public List<User> getAllUser() {
         Session session = this.sessionFactory.getCurrentSession();
@@ -40,11 +41,11 @@ public class userDao {
 //    public User checkLogin() {
 //    	this.sessionFactory.getCurrentSession().
 //    }
+
     @Transactional
     public User getUser(String username,String password) {
     	Query query = sessionFactory.getCurrentSession().createQuery("from CUSTOMER where username = :username");
     	query.setParameter("username",username);
-    	
     	try {
 			User user = (User) query.getSingleResult();
 			System.out.println(user.getPassword());
@@ -58,7 +59,6 @@ public class userDao {
 			User user = new User();
 			return user;
 		}
-    	
     }
 
 	@Transactional
@@ -70,9 +70,8 @@ public class userDao {
 
 	@Transactional
 	public User getUserByUsername(String username) {
-	        Query<User> query = sessionFactory.getCurrentSession().createQuery("from User where username = :username", User.class);
+	        Query<User> query = sessionFactory.getCurrentSession().createQuery("from CUSTOMER where username = :username", User.class);
 	        query.setParameter("username", username);
-	        
 	        try {
 	            return query.getSingleResult();
 	        } catch (Exception e) {
@@ -80,4 +79,24 @@ public class userDao {
 	            return null; 
 	        }
     	}
+
+        @Transactional
+		public void deleteUserById(Integer id){
+		Query query=sessionFactory.getCurrentSession().createQuery("DELETE from CUSTOMER where id=:id");
+			query.setParameter("id",id);
+			int result=query.executeUpdate();
+		}
+
+	@Transactional
+	public User getUserById(int id) {
+		Query<User> query=sessionFactory.getCurrentSession().createQuery("from CUSTOMER where id=:id");
+			query.setParameter("id",id);
+		return query.getSingleResult();
+	   }
+
+//	@Transactional
+//	public void updateUserByUser(User user) {
+//		userDao.updateUserByUser(user);
+//	}
+
 }

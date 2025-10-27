@@ -12,6 +12,9 @@ import javax.persistence.OneToOne;
 
 @Entity(name="PRODUCT")
 public class Product {
+	public Product() {
+	}
+
 	@Id
 	@Column(name = "product_id")
 	@GeneratedValue(strategy=GenerationType.AUTO)

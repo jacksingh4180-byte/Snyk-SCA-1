@@ -66,7 +66,7 @@ public class AdminController {
 	    return mv;
 	}
 	
-	@GetMapping("categories")
+	@GetMapping("/categories")
 	public ModelAndView getcategory() {
 		ModelAndView mView = new ModelAndView("categories");
 		List<Category> categories = this.categoryService.getCategories();
@@ -103,12 +103,10 @@ public class AdminController {
 
 	
 //	 --------------------------Remaining --------------------
-	@GetMapping("products")
+	@GetMapping("/products")
 	public ModelAndView getproduct() {
 		ModelAndView mView = new ModelAndView("products");
-
 		List<Product> products = this.productService.getProducts();
-		
 		if (products.isEmpty()) {
 			mView.addObject("msg", "No products are available");
 		} else {
@@ -142,24 +140,30 @@ public class AdminController {
 		return "redirect:/admin/products";
 	}
 
-	@GetMapping("products/update/{id}")
+	@GetMapping("/products/update/{id}")
 	public ModelAndView updateproduct(@PathVariable("id") int id) {
-		
 		ModelAndView mView = new ModelAndView("productsUpdate");
 		Product product = this.productService.getProduct(id);
 		List<Category> categories = this.categoryService.getCategories();
-
 		mView.addObject("categories",categories);
 		mView.addObject("product", product);
 		return mView;
 	}
-	
-	@RequestMapping(value = "products/update/{id}",method=RequestMethod.POST)
-	public String updateProduct(@PathVariable("id") int id ,@RequestParam("name") String name,@RequestParam("categoryid") int categoryId ,@RequestParam("price") int price,@RequestParam("weight") int weight, @RequestParam("quantity")int quantity,@RequestParam("description") String description,@RequestParam("productImage") String productImage)
-	{
 
-//		this.productService.updateProduct();
+	@RequestMapping(value = "/products/update/{id}",method=RequestMethod.POST)
+	public String updateProduct(@PathVariable("id") int id ,@RequestParam("name") String name,@RequestParam("price") int price,@RequestParam("weight") int weight, @RequestParam("quantity")int quantity,@RequestParam("description") String description,@RequestParam("productImage") String productImage) {
+		Product product =new Product();
+		product.setId(id);
+		product.setName(name);
+		//product.setImage(image);
+	//	product.setCategory(categoryId);
+		product.setQuantity(quantity);
+		product.setPrice(price);
+		product.setWeight(weight);
+		product.setDescription(description);
+		this.productService.updateProduct(id,product);
 		return "redirect:/admin/products";
+		//,@RequestParam("categoryid") int categoryId
 	}
 	
 	@GetMapping("products/delete")
@@ -240,7 +244,6 @@ public class AdminController {
 		            username,
 		            password,
 		            SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-
 		    SecurityContextHolder.getContext().setAuthentication(newAuthentication);
 		}
 		catch(Exception e)
@@ -250,4 +253,50 @@ public class AdminController {
 		return "redirect:index";
 	}
 
+	//@PostMapping("/customers/delete")
+	@RequestMapping(value = "/customers/delete",method=RequestMethod.POST)
+	public ModelAndView customer_delete(@RequestParam int id){
+		ModelAndView mView = new ModelAndView("displayCustomers");
+		userService.deleteUserById(id);
+		List<User> users = this.userService.getUsers();
+		mView.addObject("customers",users);
+		System.out.println("User Deleted with"+ id);
+		return mView;
+	}
+
+
+	@RequestMapping(value = "/customers/update",method=RequestMethod.GET)
+	public ModelAndView customer_update(@RequestParam int id){
+		ModelAndView mView = new ModelAndView("updateCustomerUser");
+		User user=userService.getUserById(id);
+		mView.addObject("customers",user);
+		return mView;
+	}
+
+	@RequestMapping(value = "/customers/update",method=RequestMethod.POST)
+	public ModelAndView customer_update(@RequestParam(required=false) int id,@RequestParam String username,@RequestParam String email,@RequestParam String address){
+		ModelAndView mView = new ModelAndView("displayCustomers");
+		User user=userService.getUserById(id);
+		user.setId(id);
+		user.setUsername(username);
+		user.setEmail(email);
+		user.setAddress(address);
+		userService.addUser(user);
+		List<User> users = this.userService.getUsers();
+		mView.addObject("customers",users);
+		return mView;
+	}
 }
+
+
+
+
+//	<div class="form-group">
+//						<label for="category">Select Category</label>
+//						<select class="form-control border border-success" name="categoryid" readonly>
+//<option selected>Select a Category</option>
+//                            		<c:forEach var="category" items="${categories}">
+//                            		<option value="${category.id}">${category.name}</option>
+//                            	</c:forEach>
+//						</select>
+//					</div>

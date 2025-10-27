@@ -111,10 +111,6 @@
 
 					<td>
 						<form action="categories/update" method="get">
-
-
-
-
 							<!-- Button trigger modal -->
 							<button type="button" class="btn btn-warning" data-toggle="modal"
 								data-target="#exampleModalCenter2"
