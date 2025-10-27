@@ -38,49 +38,50 @@
 							Page</a></li>
 					<li class="nav-item active"><a class="nav-link" href="logout">Logout</a>
 					</li>
-
 				</ul>
-
 			</div>
 		</div>
 	</nav><br>
 	<div class="container-fluid">
-
-		
 		<table class="table">
-
 			<tr>
-				
 				<th scope="col">Customer Name</th>
 				<th scope="col">Email</th>
 				<th scope="col">Address</th>
 				<th scope="col">Delete</th>
+				<th scope="col">Update</th>
 			</tr>
 			<tbody>
-				<c:forEach var="customer" items="${customers }">
+				<c:forEach var="customer" items="${customers}">
 				<tr>
 					<td>
 						${customer.username}
 					</td>
 					<td>
 					    ${customer.email}
-						
 					</td>
 					<td>
 					    ${customer.address}
-						
+				    </td>
+
+				    <td>
+				    <form action="/admin/customers/delete" method="POST">
+				    <input type="hidden" name="id" value="${customer.id}"></input>
+				     <input type="submit" value="DELETE"></input>
+				    </form>
+				    </td>
+
+				    <td>
+                    <form action="/admin/customers/update" method="GET">
+                    <input type="hidden" name="id" value="${customer.id}"></input>
+                     <input type="submit" value="UPDATE"></input>
+                     </form>
 				    </td>
 					</tr>
                 </c:forEach>
-
-
-				
 			</tbody>
 		</table>
-		
 	</div>
-
-
 
 	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
 		integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"

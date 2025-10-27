@@ -11,7 +11,7 @@ import com.jtspringproject.JtSpringProject.dao.userDao;
 import com.jtspringproject.JtSpringProject.models.User;
 
 @Service
-public class userService {
+public class userService{
 	@Autowired
 	private userDao userDao;
 	
@@ -39,4 +39,17 @@ public class userService {
 	public User getUserByUsername(String username) {
 	        return userDao.getUserByUsername(username);
 	    }
+
+	public void deleteUserById(Integer id) {
+		 userDao.deleteUserById(id);
+	}
+
+	public User getUserById(int id) {
+		return userDao.getUserById(id);
+	}
+
+//	public void updateUserByUser(User user) {
+//		userDao.updateUserByUser(user);
+//	}
+
 }

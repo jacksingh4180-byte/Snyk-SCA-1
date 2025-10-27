@@ -7,7 +7,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.jtspringproject.JtSpringProject.models.Category;
 
 @Repository
@@ -20,7 +19,7 @@ public class categoryDao {
 	}
 
 	@Transactional
-	public Category addCategory(String name) {
+	public Category addCategory(String name) { //Add category into database
 		Category category = new Category();
 		category.setName(name);
 		this.sessionFactory.getCurrentSession().saveOrUpdate(category);

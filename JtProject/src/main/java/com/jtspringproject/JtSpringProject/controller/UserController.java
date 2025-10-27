@@ -12,9 +12,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import com.jtspringproject.JtSpringProject.services.cartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,10 +20,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
 import com.jtspringproject.JtSpringProject.services.userService;
 import com.jtspringproject.JtSpringProject.services.productService;
 import com.jtspringproject.JtSpringProject.services.cartService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Controller
 public class UserController{
@@ -33,10 +32,13 @@ public class UserController{
 	private final userService userService;
 	private final productService productService;
 
+	private PasswordEncoder passwordEncoder;
+
 	@Autowired
-	public UserController(userService userService, productService productService) {
+	public UserController(userService userService, productService productService,PasswordEncoder passwordEncoder) {
 		this.userService = userService;
 		this.productService = productService;
+		this.passwordEncoder=passwordEncoder;
 	}
 
 	@GetMapping("/register")
@@ -101,8 +103,8 @@ public class UserController{
 		if(!exists) {
 			System.out.println(user.getEmail());
 			user.setRole("ROLE_NORMAL");
+			//user.setPassword(passwordEncoder.encode(user.getPassword()));
 			this.userService.addUser(user);
-
 			System.out.println("New user created: " + user.getUsername());
 			ModelAndView mView = new ModelAndView("userLogin");
 			return mView;

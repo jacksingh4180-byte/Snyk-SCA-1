@@ -28,7 +28,6 @@ public class cartDao {
     public List<Cart> getCarts() {
         return this.sessionFactory.getCurrentSession().createQuery("from CART").list();
     }
-
 //    @Transactional
 //    public List<Cart> getCartsByCustomerID(Integer customer_id) {
 //        String hql = "from CART where CART.customer_id = :customer_id";
