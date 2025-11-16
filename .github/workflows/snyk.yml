@@ -1,4 +1,4 @@
-name: DevSecOps SCA Scan
+name: Snyk SCA Scan
 
 on:
   push:
@@ -28,16 +28,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Build Project
+      - name: Build Maven Project
         run: mvn -f JtProject/pom.xml clean install -B
 
       - name: Install Snyk CLI
         run: npm install -g snyk
 
-      - name: Run Snyk Test (using system Maven)
+      - name: Run Snyk Test
         run: |
           cd JtProject
-          snyk test --all-projects --maven-executable=mvn --json=snyk-report.json || true
+          snyk test --all-projects --maven-executable=mvn --json-file-output=snyk-report.json || true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
