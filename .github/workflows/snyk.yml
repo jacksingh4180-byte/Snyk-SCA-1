@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '17'  # Change if you use a different version
+          java-version: '17'
 
       - name: Cache Maven Dependencies
         uses: actions/cache@v3
@@ -29,13 +29,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Build Project (in JtProject)
+      - name: Build Project
         run: mvn -f JtProject/pom.xml clean install -B
 
       - name: Run Snyk Test
+        working-directory: JtProject   # <--- Move it here
         uses: snyk/actions/maven@master
         continue-on-error: true
-        working-directory: JtProject
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
@@ -48,9 +48,9 @@ jobs:
           path: JtProject/snyk-report.json
 
       - name: Monitor to Snyk Portal
+        working-directory: JtProject   # <--- Move it here
         uses: snyk/actions/maven@master
-        working-directory: JtProject
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: monitor --all-projects #sw
+          args: monitor --all-projects
