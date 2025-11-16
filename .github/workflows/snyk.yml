@@ -1,49 +1,48 @@
-name: Snyk SCA Scan
+name: Snyk Security Scan
 
 on:
   push:
     branches:
-      - '**'
+      - main
   pull_request:
-    branches:
-      - '**'
 
 jobs:
   snyk-scan:
     runs-on: ubuntu-latest
 
-    env:
-      JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.17-10/x64
-      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Java 17
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17  # adjust if needed
+
+      - name: Install Maven
         uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: 17
+          cache: maven
 
       - name: Install Snyk CLI
-        run: npm install -g snyk
-
-      - name: Navigate to project folder
-        run: cd JtProject
-
-      - name: Run Snyk Test
         run: |
-          snyk test --all-projects --maven-executable=mvn --file=pom.xml --json-file-output=snyk-report.json || echo "Vulnerabilities found, continuing workflow."
-        working-directory: JtProject
+          curl -sL https://static.snyk.io/cli/latest/snyk-linux | sh
+          sudo mv snyk /usr/local/bin/
 
-      - name: Upload Snyk Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: snyk-report
-          path: JtProject/snyk-report.json
-
-      - name: Monitor project in Snyk
-        run: snyk monitor --all-projects --maven-executable=mvn --file=JtProject/pom.xml
+      - name: Authenticate Snyk
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk auth $SNYK_TOKEN
+
+      - name: Run Snyk test on all Maven projects
+        run: |
+          snyk test --all-projects --maven-executable=mvn --json-file-output=snyk-report.json || echo "Vulnerabilities found, continuing workflow."
+
+      - name: Upload Snyk JSON report
+        uses: actions/upload-artifact@v3
+        with:
+          name: snyk-report
+          path: snyk-report.json
