@@ -16,19 +16,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up JDK 17
-      - name: Set up JDK 17
+      # Set up JDK 17 and cache Maven dependencies
+      - name: Set up JDK 17 with Maven
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      # Install Maven (system Maven)
-      - name: Set up Maven
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: temurin
+          java-version: 17
           cache: maven
 
       # Verify Maven installation
@@ -53,8 +46,9 @@ jobs:
         working-directory: JtProject
         run: snyk monitor --maven-executable=mvn
 
-      # Upload SARIF to GitHub Security
+      # Upload SARIF to GitHub Security (v3)
       - name: Upload SARIF to GitHub Security
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: snyk.sarif
+          token: ${{ secrets.GITHUB_TOKEN }}
