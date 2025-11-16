@@ -35,9 +35,13 @@ jobs:
       - name: Install Snyk CLI
         run: npm install -g snyk
 
+      - name: Make Maven Wrapper Executable
+        run: chmod +x JtProject/mvnw
+
       - name: Run Snyk Test
         run: |
           cd JtProject
+          # Use Maven directly or ./mvnw
           snyk test --all-projects --json=snyk-report.json || true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
