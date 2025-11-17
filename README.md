@@ -11,7 +11,7 @@
 
 -->
 [![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
+[![Stargazers][stars-shield]][stars-url]d
 [![LinkedIn][linkedin-shield]][linkedin-url]
 <br>
 <h3>currently working on  New Branch(https://github.com/jaygajera17/E-commerce-project-springBoot/tree/master2) for Integrated Hibernate, services, based well structured code.</h3>
