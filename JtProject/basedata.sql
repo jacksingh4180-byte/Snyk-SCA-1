@@ -4,7 +4,7 @@ SET SQL_MODE ='IGNORE_SPACE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_EN
 # create database and use it
 CREATE DATABASE IF NOT EXISTS ecommjava;
 USE ecommjava;
-
+#hello 
 # create the category table
 CREATE TABLE IF NOT EXISTS CATEGORY(
 category_id int unique key not null auto_increment primary key,
