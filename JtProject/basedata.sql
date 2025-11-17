@@ -20,6 +20,9 @@ INSERT INTO CATEGORY(name) VALUES ('Fruits'),
                                   ('Bakery'),
                                   ('Drinks'),
                                   ('Sweets'),
+                                  ('Other');('Bakery'),
+                                  ('Drinks'),
+                                  ('Sweets'),
                                   ('Other');
 
 # create the customer table
