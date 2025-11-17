@@ -18,12 +18,8 @@ INSERT INTO CATEGORY(name) VALUES ('Fruits'),
                                   ('Fish'),
                                   ('Dairy'),
                                   ('Bakery'),
-                                  ('Drinks'),
-                                  ('Sweets'),
-                                  ('Other');('Bakery'),
-                                 
-                                  ('Other');
-
+                                  ('Drinks');
+                                
 # create the customer table
 CREATE TABLE IF NOT EXISTS CUSTOMER(
 id       int unique key not null auto_increment primary key,
