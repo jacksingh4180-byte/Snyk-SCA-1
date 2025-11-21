@@ -30,7 +30,7 @@ jobs:
       - name: Install Snyk
         run: npm install -g snyk
 
-      - name: Authenticate Snyk
+      - name: Authenticate Snyk #d
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
       # Run Snyk test but DO NOT stop workflow if it fails
