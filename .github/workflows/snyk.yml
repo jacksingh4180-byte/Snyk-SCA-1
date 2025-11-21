@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout repository
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -30,17 +31,27 @@ jobs:
       - name: Install Snyk
         run: npm install -g snyk
 
-      - name: Authenticate Snyk #d
+      - name: Authenticate Snyk
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
-      # Run Snyk test but DO NOT stop workflow if it fails
+      # Run Snyk test but don't stop the workflow yet
       - name: Snyk Test for Maven (Quality Gate)
+        id: snyk_test
         working-directory: JtProject
         continue-on-error: true
-        run: snyk test --maven-executable=mvn --severity-threshold=medium
+        run: |
+          snyk test --maven-executable=mvn --severity-threshold=medium
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
 
-      # Always upload results to Snyk portal even if the test step fails
+      # Always upload results to Snyk portal
       - name: Snyk Monitor (Always Upload Results)
         if: always()
         working-directory: JtProject
         run: snyk monitor --maven-executable=mvn
+
+      # Fail the build if Snyk test found vulnerabilities
+      - name: Fail build if Snyk test failed
+        if: steps.snyk_test.outputs.exit_code != '0'
+        run: |
+          echo "❌ Vulnerabilities detected! Failing build."
+          exit 1
