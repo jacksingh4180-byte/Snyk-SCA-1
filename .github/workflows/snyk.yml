@@ -2,11 +2,9 @@ name: Snyk Security Scan — Quality Gate
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -14,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repository
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -34,24 +31,28 @@ jobs:
       - name: Authenticate Snyk
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
-      # Run Snyk test but don't stop the workflow yet
+      # Run Snyk test while capturing EXIT CODE
       - name: Snyk Test for Maven (Quality Gate)
         id: snyk_test
         working-directory: JtProject
         continue-on-error: true
         run: |
           snyk test --maven-executable=mvn --severity-threshold=medium
-          echo "exit_code=$?" >> $GITHUB_OUTPUT
+          echo "EXIT_CODE=$?" >> $GITHUB_ENV
 
-      # Always upload results to Snyk portal
+      # Always upload results
       - name: Snyk Monitor (Always Upload Results)
         if: always()
         working-directory: JtProject
         run: snyk monitor --maven-executable=mvn
 
-      # Fail the build if Snyk test found vulnerabilities
-      - name: Fail build if Snyk test failed
-        if: steps.snyk_test.outputs.exit_code != '0'
+      # FAIL THE ENTIRE WORKFLOW IF EXIT CODE IS NON-ZERO
+      - name: Fail workflow if vulnerabilities detected
+        if: always()
         run: |
-          echo "❌ Vulnerabilities detected! Failing build."
-          exit 1
+          if [ "$EXIT_CODE" != "0" ]; then
+            echo " Vulnerabilities detected. Failing workflow."
+            exit 1
+          else
+            echo "✅ No vulnerabilities above threshold."
+          fi
