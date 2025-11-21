@@ -3,20 +3,22 @@ name: Snyk Security Scan — Quality Gate
 on:
   push:
     branches:
-      - main
+      - main        # Default branch
   pull_request:
     branches:
-      - main
-  workflow_dispatch:
+      - main        # PRs targeting main
+  workflow_dispatch: # Optional: manual trigger
 
 jobs:
   snyk-sca:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout repository
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Set up JDK 17 with Maven cache
       - name: Set up JDK 17 with Maven
         uses: actions/setup-java@v3
         with:
@@ -24,23 +26,24 @@ jobs:
           java-version: 17
           cache: maven
 
+      # Verify Maven installation
       - name: Verify Maven
         run: mvn -version
 
+      # Install Snyk CLI
       - name: Install Snyk
         run: npm install -g snyk
 
+      # Authenticate Snyk
       - name: Authenticate Snyk
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
-      # Run Snyk test but DO NOT stop workflow if it fails
+      # Run Snyk test and FAIL on medium, high, or critical
       - name: Snyk Test for Maven (Quality Gate)
         working-directory: JtProject
-        continue-on-error: true
         run: snyk test --maven-executable=mvn --severity-threshold=medium
 
-      # Always upload results to Snyk portal even if the test step fails
-      - name: Snyk Monitor (Always Upload Results)
-        if: always()
+      # Send results to Snyk dashboard
+      - name: Snyk Monitor
         working-directory: JtProject
         run: snyk monitor --maven-executable=mvn
